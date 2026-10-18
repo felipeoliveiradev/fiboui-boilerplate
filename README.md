@@ -1,52 +1,44 @@
 # FiboUI Boilerplate
 
-Next.js App Router starter for building apps with [FiboUI](https://fiboui.vercel.app).
-
-Clean-architecture modules live under `src/modules/`. Routes live under `app/`. Pages are client islands that paint FiboUI builders; the shell uses Next for routing and SSR layout.
+Next.js is only the host. Screens, state, and navigation are FiboUI.
 
 ## Stack
 
-- Next.js 16 (App Router)
-- React 19
-- FiboUI `^2.7.1` (npm)
-- Lucide icons
+- Next.js 16 (one catch-all route)
+- FiboUI `^2.7.1`
+- `noir` theme, same ink / chalk / lime / pink as the product site
 
-## Modules
+## Navigation
 
-| Path | Role |
-|------|------|
-| `src/modules/todo` | Todo list (Form, List, Store ViewModel) |
-| `src/modules/performance` | Map / sheet demo |
+`go()` in `src/main/go.ts` pushes the URL and notifies the FiboUI `Router`. The lime **GO** button and the bottom bar both call it. Do not use `next/navigation`.
 
-## Routes
+```ts
+import { go } from '@/src/main/go'
 
-| URL | Page |
-|-----|------|
-| `/` | Todo |
-| `/todo` | Todo |
-| `/performance` | Performance |
+go('/performance')
+go('/todo')
+```
+
+## Screens
+
+| URL | Screen |
+|-----|--------|
+| `/`, `/todo` | Todo list |
+| `/performance` | Board (map, live earnings) |
+
+State lives in `@Store()` classes. A list is a `listSignal`: `add`, `update`, `remove`, and `viewWhere` for the active filter. Pages use `getStore()` and `.observer()`. No `useState` or `useEffect`.
 
 ## Commands
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
+npm run dev
 npm run build
 npm run typecheck
 ```
 
-## Local FiboUI (optional)
-
-To develop against the monorepo instead of npm:
+Local library instead of npm:
 
 ```bash
 npm install ../fiboui --install-links
 ```
-
-`transpilePackages: ['fiboui']` is already set in `next.config.ts`.
-
-## Notes
-
-- Prefer `next/navigation` (`useRouter`) over FiboUI `Router` / `useNavigate`.
-- Interactive FiboUI trees stay in `'use client'` pages. The root layout stays a server component and only wraps `FiboThemeProvider`.
-- This project replaced the Vite boilerplate that used to live inside the `fiboui` repo.

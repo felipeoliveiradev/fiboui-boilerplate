@@ -1,8 +1,9 @@
-import { Todo } from '../Models/Todo';
+import type { ListEntity } from 'fiboui'
+import { Todo } from '../Models/Todo'
 
 export interface ITodoRepository {
-    getAll(): Promise<Todo[]>;
-    add(todo: Todo): Promise<void>;
-    update(todo: Todo): Promise<void>;
-    delete(id: string): Promise<void>;
+  getAll(): Promise<ListEntity<Todo>[]>
+  add(todo: ListEntity<Todo>): Promise<void>
+  update(todo: ListEntity<Todo>): Promise<void>
+  delete(id: string): Promise<void>
 }

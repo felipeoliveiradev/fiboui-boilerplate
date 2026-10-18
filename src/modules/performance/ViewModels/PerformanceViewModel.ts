@@ -1,17 +1,25 @@
-import { Store, signal } from 'fiboui';
+import { listSignal, ListSignal, Store, signal } from 'fiboui';
 import { PerformanceService } from '../Services/PerformanceService';
+import { TripData } from '../Models/PerformanceData';
 
 @Store()
 export class PerformanceViewModel {
   isOnline = signal(false);
   earnings = signal(0);
-  sheetY = signal(0);
+  trips: ListSignal<Omit<TripData, 'id'>>;
 
   public service: PerformanceService;
   private updateInterval: number | null = null;
 
   constructor() {
     this.service = new PerformanceService();
+    this.trips = listSignal(
+      this.service.getRecentTrips().map(({ id: _id, ...trip }) => trip)
+    );
+    if (typeof window === 'undefined') return;
+    window.addEventListener('popstate', () => {
+      if (window.location.pathname !== '/performance') this.dispose();
+    });
   }
 
   toggleOnlineStatus(): void {

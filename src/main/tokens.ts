@@ -1,0 +1,6 @@
+export const ink = '#000000'
+export const chalk = '#ffffff'
+export const muted = '#9a9a9a'
+export const pink = '#ff2d8a'
+export const lime = '#c8ff00'
+export const line = 'rgba(255,255,255,0.16)'

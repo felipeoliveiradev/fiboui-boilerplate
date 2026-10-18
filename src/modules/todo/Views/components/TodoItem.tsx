@@ -1,35 +1,18 @@
-import { Box, Checkbox, Row } from 'fiboui';
-import { Todo } from '../../Models/Todo';
+import type { ListEntity } from 'fiboui'
+import { Checkbox, Row, Text } from 'fiboui'
+import { chalk, line, muted } from '@/src/main/tokens'
+import { Todo } from '../../Models/Todo'
 
-interface TodoItemProps {
-    todo: Todo;
-    onToggle: () => void;
-}
-
-export function TodoItem({ todo, onToggle }: TodoItemProps) {
-    return Box()
-        .props({ key: todo.id })
-        .bg('surface')
-        .className('border')
-        .borderColor('outline')
-        .rounded(0.5)
-        .p(1)
-        .className('mb-2')
-        .shadow('sm')
-        .flex()
-        .justifyContent('between')
-        .alignItems('center')
-        .children([
-            Row()
-                .gap(1)
-                .alignItems("center")
-                .children([
-                    Checkbox()
-                        .checked(todo.isCompleted)
-                        .controlled(true)
-                        .label(todo.text)
-                        .onChange(onToggle)
-                        .className(todo.isCompleted ? 'line-through opacity-60' : 'opacity-100'),
-                ])
-        ]);
+export function TodoItem(todo: ListEntity<Todo>, onToggle: () => void) {
+  const title = Text(todo.text).fontSize(16).fontWeight('600').color(todo.isCompleted ? muted : chalk)
+  return Row()
+    .width('100%')
+    .alignItems('center')
+    .gap(12)
+    .paddingVertical(14)
+    .style({ borderBottom: `1px solid ${line}` })
+    .children([
+      Checkbox().checked(todo.isCompleted).controlled(true).onChange(onToggle),
+      todo.isCompleted ? title.strikethrough() : title,
+    ])
 }
