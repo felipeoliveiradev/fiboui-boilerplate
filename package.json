@@ -1,0 +1,26 @@
+{
+  "name": "fiboui-boilerplate",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Next.js starter with FiboUI fluent builders and clean-architecture modules",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fiboui": "^2.7.1",
+    "lucide-react": "^0.562.0",
+    "next": "^16.4.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}
