@@ -1,5 +1,5 @@
-import { Box, Button, Column, Form, getStore, List, minLength, page, required, Row, Text, TextField } from 'fiboui'
-import { shell } from '@/src/main/Shell'
+import { AppBar, Box, Button, Column, Form, getStore, List, minLength, page, required, Row, Scaffold, Text, TextField, ToolbarItem, useRouter } from 'fiboui'
+import { bottomNav, PageDrawer } from '@/src/main/Shell'
 import { chalk, ink, lime, line, muted, pink } from '@/src/main/tokens'
 import { TodoFilter, TodoViewModel } from '../ViewModels/TodoViewModel'
 import { TodoItem } from './components/TodoItem'
@@ -14,28 +14,95 @@ function filterButton(vm: TodoViewModel, key: TodoFilter, label: string) {
         .paddingHorizontal(12)
         .paddingVertical(8)
         .bg(on ? lime : 'transparent')
-        .style({ border: `1px solid ${on ? lime : line}` })
+        .border(`1px solid ${on ? lime : line}`)
         .children(
           Text(label)
             .fontSize(11)
             .fontWeight('800')
             .color(on ? ink : muted)
             .textCase('uppercase')
-            .style({ letterSpacing: '0.12em' })
+            .letterSpacing('0.12em')
         )
     )
 }
 
 export const TodoPage = page(() => {
   const vm = getStore(TodoViewModel)
+  const router = useRouter()
 
-  return shell(
-    '01 · List',
-    'Todo',
-    'todo',
+  return Scaffold()
+    .theme('noir')
+    .bg(ink)
+    .width('100%')
+    .appBar(
+      AppBar()
+        .width('100%')
+        .alignItems('end')
+        .bg(ink)
+        .paddingHorizontal(24)
+        .paddingVertical(20)
+        .items([
+          ToolbarItem()
+            .leading()
+            .size({ width: 44, height: 44 })
+            .tooltip('Menu')
+            .openDrawer()
+            .children(
+              Column()
+                .width(22)
+                .height(16)
+                .justifyContent('space-between')
+                .children([
+                  Box().width(22).height(2).bg(lime),
+                  Box().width(22).height(2).bg(lime),
+                  Box().width(22).height(2).bg(lime),
+                ]),
+            ),
+          ToolbarItem()
+            .principal()
+            .children(
+              Column()
+                .gap(8)
+                .children([
+                  Text('01 · List')
+                    .fontSize(9)
+                    .fontWeight('800')
+                    .color(lime)
+                    .textCase('uppercase')
+                    .letterSpacing('0.16em')
+                    .lineHeight(1),
+                  Text('Todo')
+                    .fontSize(40)
+                    .fontWeight('800')
+                    .color(chalk)
+                    .textCase('uppercase')
+                    .letterSpacing('-0.04em')
+                    .lineHeight(0.9),
+                ]),
+            ),
+          ToolbarItem()
+            .trailing()
+            .size({ width: 84, height: 44 })
+            .bg(lime)
+            .tooltip('Go')
+            .onPress(() => router.navigate('/performance'))
+            .children(
+              Text('GO')
+                .fontSize(13)
+                .fontWeight('800')
+                .color(ink)
+                .textCase('uppercase')
+                .letterSpacing('0.14em'),
+            ),
+        ]),
+    )
+    .footerBar(bottomNav('todo'))
+    .drawer(<PageDrawer here="todo" />)
+    .drawerWidth(260)
+    .children(
     Column()
       .width('100%')
-      .maxWidth(720)
+      .marginX("auto")
       .padding(24)
       .gap(20)
       .children([
@@ -51,7 +118,7 @@ export const TodoPage = page(() => {
             Row()
               .width('100%')
               .gap(8)
-              .alignItems('stretch')
+              .alignY('stretch')
               .children([
                 Box()
                   .flex(1)
@@ -62,7 +129,8 @@ export const TodoPage = page(() => {
                       .variant('outlined')
                       .bg(ink)
                       .color(chalk)
-                      .style({ borderRadius: 0, border: `1px solid ${line}` })
+                      .borderRadius(0)
+                      .border(`1px solid ${line}`)
                   ),
                 Button()
                   .clean()
@@ -78,27 +146,29 @@ export const TodoPage = page(() => {
                           .fontWeight('800')
                           .color(chalk)
                           .textCase('uppercase')
-                          .style({ letterSpacing: '0.12em' })
+                          .letterSpacing('0.12em')
                       )
                   ),
               ]),
           ]),
         Box()
           .observer()
+          .width('100%')
           .children(() => {
             void vm.todos.value
             return [
               Row()
                 .width('100%')
-                .justifyContent('between')
-                .alignItems('center')
+                .alignX('start')
+                .alignY('center')
                 .children([
                   Text(`${vm.left} left`)
                     .fontSize(11)
+                    .width(80)
                     .fontWeight('800')
                     .color(muted)
                     .textCase('uppercase')
-                    .style({ letterSpacing: '0.12em' }),
+                    .letterSpacing('0.12em'),
                   Row()
                     .gap(8)
                     .children([
@@ -113,21 +183,20 @@ export const TodoPage = page(() => {
           .observer()
           .width('100%')
           .children(() => {
-            if (vm.isLoading.value) {
-              return [Text('Loading').fontSize(12).fontWeight('800').color(lime).textCase('uppercase')]
-            }
             if (vm.error.value) {
               return [Text(vm.error.value).fontSize(14).color(pink)]
             }
             return [
               List()
                 .width('100%')
+                .reset()
                 .items(vm.todos)
                 .variant('default')
                 .empty(Text('Nothing here').fontSize(14).color(muted))
-                .renderItem((todo) => TodoItem(todo, () => vm.toggleTodo(todo._id))),
+                .onPress((todo) => vm.toggleTodo(todo._id))
+                .renderItem((todo) => TodoItem(todo)),
             ]
           }),
       ])
-  )
+    )
 })

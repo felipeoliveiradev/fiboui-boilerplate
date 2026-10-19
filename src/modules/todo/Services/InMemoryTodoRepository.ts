@@ -1,16 +1,13 @@
 import type { ListEntity } from 'fiboui'
 import { Todo } from '../Models/Todo'
 import { ITodoRepository } from './ITodoRepository'
+import { TODO_SEED } from './todo.seed'
 
 export class InMemoryTodoRepository implements ITodoRepository {
-  private _db: ListEntity<Todo>[] = [
-    { _id: '1', text: 'Learn FiboUI Architecture', isCompleted: true },
-    { _id: '2', text: 'Build a Clean Architecture app', isCompleted: false },
-    { _id: '3', text: 'Master Reactivity', isCompleted: false },
-  ]
+  private _db: ListEntity<Todo>[] = TODO_SEED.map((todo) => ({ ...todo }))
 
   async getAll(): Promise<ListEntity<Todo>[]> {
-    return new Promise((resolve) => setTimeout(() => resolve(this._db.map((todo) => ({ ...todo }))), 500))
+    return this._db.map((todo) => ({ ...todo }))
   }
 
   async add(todo: ListEntity<Todo>): Promise<void> {

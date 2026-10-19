@@ -8,3 +8,7 @@ dist
 .env
 .env.*
 !.env.example
+
+# Copied from the installed fiboui package by postinstall.
+# Importing fiboui/style.css pulls in fiboui's Tailwind postcss config and breaks Turbopack.
+app/fiboui.css

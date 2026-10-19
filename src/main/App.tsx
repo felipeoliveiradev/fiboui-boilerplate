@@ -1,25 +1,20 @@
 'use client'
 
 import { createElement, type ComponentType } from 'react'
-import { Box, FiboThemeProvider, Router, Text } from 'fiboui'
+import { FiboThemeProvider, Router } from 'fiboui'
 import { TodoPage } from '@/src/modules/todo/Views/TodoPage'
 import { PerformancePage } from '@/src/modules/performance/Views/PerformancePage'
-import { chalk, ink } from './tokens'
+import { ColorPage } from '@/src/modules/color/Views/ColorPage'
+import { MissingPage } from '@/src/modules/status/Views/MissingPage'
+import { FaultPage } from '@/src/modules/status/Views/FaultPage'
+import { WaitPage } from '@/src/modules/status/Views/WaitPage'
 
 const routes = [
   { path: '/', component: TodoPage as ComponentType },
   { path: '/todo', component: TodoPage as ComponentType },
   { path: '/performance', component: PerformancePage as ComponentType },
+  { path: '/color', component: ColorPage as ComponentType },
 ]
-
-function Missing() {
-  return Box()
-    .width('100%')
-    .height('100vh')
-    .bg(ink)
-    .center()
-    .children(Text('404').fontSize(32).fontWeight('800').color(chalk).textCase('uppercase'))
-}
 
 export function App({ initialPath }: { initialPath: string }) {
   return createElement(FiboThemeProvider, {
@@ -27,7 +22,9 @@ export function App({ initialPath }: { initialPath: string }) {
     children: createElement(Router, {
       routes,
       initialPath,
-      fallback: Missing,
+      fallback: MissingPage as ComponentType,
+      loading: createElement(WaitPage),
+      errorBoundary: createElement(FaultPage),
     }),
   })
 }

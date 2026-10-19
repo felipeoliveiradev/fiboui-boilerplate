@@ -8,10 +8,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "sync:fiboui-css": "cp -f node_modules/fiboui/dist/style.css app/fiboui.css",
+    "postinstall": "npm run sync:fiboui-css"
   },
   "dependencies": {
-    "fiboui": "^2.7.1",
+    "fiboui": "^2.8.1",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.562.0",
     "next": "^16.4.2",
     "react": "19.1.0",

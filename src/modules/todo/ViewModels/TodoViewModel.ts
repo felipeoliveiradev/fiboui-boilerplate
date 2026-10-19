@@ -1,14 +1,15 @@
 import { listSignal, ListSignal, Store, signal } from 'fiboui'
 import { ITodoRepository } from '../Services/ITodoRepository'
 import { InMemoryTodoRepository } from '../Services/InMemoryTodoRepository'
+import { TODO_SEED } from '../Services/todo.seed'
 import { Todo } from '../Models/Todo'
 
 export type TodoFilter = 'all' | 'active' | 'completed'
 
 @Store()
 export class TodoViewModel {
-  todos: ListSignal<Todo> = listSignal<Todo>([])
-  isLoading = signal(true)
+  /** Seeded sync so SSR HTML matches the first client paint. */
+  todos: ListSignal<Todo> = listSignal<Todo>(TODO_SEED.map((todo) => ({ ...todo })))
   error = signal<string | null>(null)
 
   /** Which viewWhere is applied. The list itself is the filter. */
@@ -17,7 +18,6 @@ export class TodoViewModel {
 
   constructor() {
     this.repo = new InMemoryTodoRepository()
-    void this.loadTodos()
   }
 
   get shownFilter(): TodoFilter {
@@ -27,20 +27,6 @@ export class TodoViewModel {
   /** Active rows in the full list, ignoring the current view. */
   get left(): number {
     return this.todos.filter((todo) => !todo.isCompleted).length
-  }
-
-  async loadTodos() {
-    this.isLoading.value = true
-    this.error.value = null
-    try {
-      const data = await this.repo.getAll()
-      this.todos.set(data)
-      this.applyView()
-      this.isLoading.value = false
-    } catch (e: unknown) {
-      this.isLoading.value = false
-      this.error.value = e instanceof Error ? e.message : 'Failed to load'
-    }
   }
 
   async addTodo(text: string) {
